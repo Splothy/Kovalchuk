@@ -1,0 +1,97 @@
+
+:root{
+    --bg: #0f172a;
+    --text: #e2e8f0;
+    --link: #60a5fa;
+    --visited: #a78bfa;
+    --hover: #34d399;
+}
+
+html, body {
+    margin: 0;
+    padding: 0 12px 40px;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+}
+
+{
+    text-align: center;
+    margin: 28px 0 16px;
+}
+
+a:link { color: var(--link); }
+a:visited { color: var(--visited); }
+a:hover { color: var(--hover); }
+
+
+hr {
+    border: none;
+    border-top: 2px solid #475569;
+    margin: 12px auto;
+}
+
+.hr-1 { width: 90%; border-top-width: 1px; }
+.hr-2 { width: 75%; border-top-width: 2px; }
+.hr-3 { width: 60%; border-top-width: 3px; }
+.hr-4 { width: 45%; border-top-width: 4px; }
+.hr-5 { width: 30%; border-top-width: 5px; }
+.hr-6 { width: 20%; border-top-width: 6px; }
+
+.poem {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 10px 14px;
+    background: rgba(148,163,184,0.08);
+    border-left: 4px solid #64748b;
+    border-radius: 8px;
+}
+
+.entities li {
+    margin: 6px 0;
+}
+code {
+    background: rgba(148,163,184,0.15);
+    padding: 1px 6px;
+    border-radius: 6px;
+}
+
+.image-line {
+    text-align: center;
+}
+.coat {
+    width: 140px;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+    transition: transform .2s ease;
+}
+.coat:hover { transform: scale(1.04); }
+
+.demo-table {
+    width: 50%;
+    margin: 16px auto;
+    border-collapse: collapse;
+    text-align: left;
+    background: rgba(148,163,184,0.06);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.demo-table th, .demo-table td {
+    padding: 12px 14px;
+    border: 1px solid #475569;
+}
+
+.cell-1 { background: #0ea5e9; color: #05131b; font-weight: 700; text-align: center; }
+.cell-2 { background: #22c55e; color: #062012; font-weight: 700; text-align: center; }
+.cell-3 { background: #1e293b; color: #e2e8f0; }
+.cell-4 { background: #3f2e54; color: #fde68a; }
+
+ul.tight { margin: 0; padding-left: 18px; }
+
+.mail-line {
+    text-align: center;
+    margin-top: 26px;
+}
