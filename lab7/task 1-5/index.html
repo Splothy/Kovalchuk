@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search cod </title>
+    <style>
+        #container {
+            width: 500px;
+            height: 150px;
+            border: 1px solid #000;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #elid {
+            width: 100px;
+            height: 100px;
+            background: blue;
+            position: absolute;
+            left: 0;
+            top: 25px;
+            transition: left 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+
+<p>Search cod<br></p>
+
+<input id="countyInput" type="text" placeholder="Baldwin County, Alabama">
+<button id="findBtn">Знайти код</button>
+<div id="result"></div>
+<br>
+<form id="userForm">
+    <input type="text" id="first_name" name="first_name" placeholder="First name">
+    <input type="text" id="last_name"  name="last_name"  placeholder="Last name">
+    <input type="email" id="email"      name="email"      placeholder="Email">
+    <button type="submit">Submit</button>
+</form>
+<div id="error"></div>
+<br>
+
+<div id="container">
+    <div id="elid"></div>
+</div>
+<br>
+<button id="leftBtn">Вліво</button>
+<button id="rightBtn">Вправо</button>
+
+<script src="script.js"></script>
+</body>
+</html>
