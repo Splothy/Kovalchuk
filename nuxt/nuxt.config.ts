@@ -1,5 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  dir: {
+    app: 'app'
+  },
+
   modules: [
     '@nuxt/eslint',
     '@nuxt/ui'
