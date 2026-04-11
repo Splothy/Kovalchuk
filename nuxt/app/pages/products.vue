@@ -32,7 +32,7 @@
 
             <div class="btn-wrap">
               <span class="tooltip">You cannot downgrade your plan until within 30 days of your next billing date.</span>
-              <button class="btn" type="button">Downgrade to {{ plan.title }}</button>
+              <NuxtLink :to="`/checkout/${plan.slug}`" class="btn">Try it Free</NuxtLink>
             </div>
 
             <hr class="divider">
@@ -230,6 +230,7 @@ type Feature = {
 }
 
 type ProductPlan = {
+  slug: string
   title: string
   price: string
   yearly: string
