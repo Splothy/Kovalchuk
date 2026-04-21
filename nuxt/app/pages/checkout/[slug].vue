@@ -39,12 +39,12 @@
             <span class="plan-badge">3-days free then:</span>
 
             <div class="plan-price-row">
-              <span class="plan-price">{{ plan.price }}</span>
-              <span class="plan-period">/month</span>
+              <span class="plan-price">{{ selectedPlanFormatted }}</span>
+              <span class="plan-period">{{ selectedPeriodLabel }}</span>
             </div>
 
             <p class="plan-yearly">
-              billed yearly at {{ plan.yearly }}
+              {{ billingCycle === 'yearly' ? 'one annual payment' : `billed yearly at ${plan.yearly}` }}
             </p>
             <p class="plan-savings">
               {{ savingsLabel }}
@@ -85,13 +85,13 @@
             </h2>
 
             <div class="summary-row">
-              <span>Annual Plan</span>
-              <span>{{ yearlyFormatted }}</span>
+              <span>{{ selectedPlanLabel }}</span>
+              <span>{{ selectedPlanFormatted }}</span>
             </div>
 
             <div class="summary-row">
               <span>Total Due <small>(not including sales tax where applicable)</small></span>
-              <span>{{ yearlyFormatted }}</span>
+              <span>{{ selectedPlanFormatted }}</span>
             </div>
 
             <div class="summary-row summary-row-bold">
@@ -160,7 +160,7 @@
                 >
                 <span>
                   I consent to <strong>Terms of Use</strong> and understand my 3-day free trial will
-                  automatically convert to {{ yearlyFormatted }} per year.
+                  automatically convert to {{ selectedPlanFormatted }} {{ selectedPeriodText }}.
                 </span>
               </label>
 
@@ -213,6 +213,8 @@ type CreateSubscriptionResponse = {
 }
 
 const route = useRoute()
+const subscriptionStore = useSubscriptionStore()
+const billingCycle = computed(() => subscriptionStore.selectedBillingCycle)
 
 const { data, pending, error } = await useFetch<ProductPlan>(
   () => `/api/subscription/${route.params.slug}`
@@ -241,6 +243,20 @@ const yearlyFormatted = computed(() => {
   return `$${numeric.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 })
 
+const monthlyFormatted = computed(() => {
+  if (!plan.value) {
+    return '$0.00'
+  }
+
+  const numeric = Number(plan.value.price.replace(/[$,]/g, ''))
+  return `$${numeric.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+})
+
+const selectedPlanLabel = computed(() => billingCycle.value === 'yearly' ? 'Annual Plan' : 'Monthly Plan')
+const selectedPlanFormatted = computed(() => billingCycle.value === 'yearly' ? yearlyFormatted.value : monthlyFormatted.value)
+const selectedPeriodLabel = computed(() => billingCycle.value === 'yearly' ? '/year' : '/month')
+const selectedPeriodText = computed(() => billingCycle.value === 'yearly' ? 'per year' : 'per month')
+
 const savingsLabel = computed(() => {
   if (!plan.value) {
     return '$0 in savings'
@@ -253,6 +269,12 @@ const savingsLabel = computed(() => {
 
   return `$${Math.round(savings).toLocaleString('en-US')} in savings`
 })
+
+watch(plan, (value) => {
+  if (value) {
+    subscriptionStore.setSubscription(value)
+  }
+}, { immediate: true })
 
 useHead(() => ({
   title: plan.value ? `Checkout | ${plan.value.title}` : 'Checkout',

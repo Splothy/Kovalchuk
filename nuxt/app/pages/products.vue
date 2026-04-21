@@ -1,7 +1,28 @@
 ﻿<template>
   <div class="products-page">
     <div class="container">
-      <h1 class="page-title">Список продуктів</h1>
+      <div class="plans-header">
+        <h1 class="page-title">Список продуктів</h1>
+
+        <div class="billing-switch" role="group" aria-label="Billing cycle">
+          <button
+            type="button"
+            class="billing-switch-btn"
+            :class="{ 'billing-switch-btn-active': billingCycle === 'monthly' }"
+            @click="billingCycle = 'monthly'"
+          >
+            Monthly
+          </button>
+          <button
+            type="button"
+            class="billing-switch-btn"
+            :class="{ 'billing-switch-btn-active': billingCycle === 'yearly' }"
+            @click="billingCycle = 'yearly'"
+          >
+            Yearly
+          </button>
+        </div>
+      </div>
 
       <p v-if="pending" class="status-message">
         Завантаження продуктів...
@@ -23,16 +44,18 @@
             <span class="badge">7-days free then:</span>
 
             <div class="price-row">
-              <span class="price-amount">{{ plan.price }}</span>
-              <span class="price-period">/month</span>
+              <span class="price-amount">{{ getPlanDisplayPrice(plan) }}</span>
+              <span class="price-period">{{ getPlanPeriodLabel() }}</span>
             </div>
             <p class="billed-note">
-              Billed yearly at <strong>{{ plan.yearly }}</strong>
+              {{ getPlanBilledNote(plan) }}
             </p>
 
             <div class="btn-wrap">
               <span class="tooltip">You cannot downgrade your plan until within 30 days of your next billing date.</span>
-              <NuxtLink :to="`/checkout/${plan.slug}`" class="btn">Try it Free</NuxtLink>
+              <NuxtLink :to="`/checkout/${plan.slug}`" class="btn" @click="selectPlan(plan)">
+                Try it Free
+              </NuxtLink>
             </div>
 
             <hr class="divider">
@@ -264,6 +287,7 @@ type DummyResponse = {
 }
 
 type DummySortKey = Exclude<keyof DummyProduct, 'id' | 'thumbnail'>
+type BillingCycle = 'monthly' | 'yearly'
 
 useHead({
   title: 'Список продуктів',
@@ -291,6 +315,11 @@ const { data: dummyData, pending: dummyPending, error: dummyError } = await useF
 
 const plans = computed(() => data.value ?? [])
 const dummyProducts = computed(() => dummyData.value?.products ?? [])
+const subscriptionStore = useSubscriptionStore()
+const billingCycle = computed<BillingCycle>({
+  get: () => subscriptionStore.selectedBillingCycle,
+  set: (value) => subscriptionStore.setBillingCycle(value)
+})
 
 const globalFilter = ref('')
 const currentPage = ref(1)
@@ -462,6 +491,26 @@ function extractFirstNumber(value: string) {
   const match = value.match(/[\d,]+/)
   return match ? Number(match[0].replace(/,/g, '')) : 0
 }
+
+function selectPlan(plan: ProductPlan) {
+  subscriptionStore.setSubscription(plan)
+}
+
+function getPlanDisplayPrice(plan: ProductPlan) {
+  return billingCycle.value === 'monthly' ? plan.price : plan.yearly
+}
+
+function getPlanPeriodLabel() {
+  return billingCycle.value === 'monthly' ? '/month' : '/year'
+}
+
+function getPlanBilledNote(plan: ProductPlan) {
+  if (billingCycle.value === 'yearly') {
+    return 'One annual payment'
+  }
+
+  return `Billed yearly at ${plan.yearly}`
+}
 </script>
 
 <style>
@@ -486,7 +535,40 @@ function extractFirstNumber(value: string) {
   font-size: 2rem;
   font-weight: 700;
   color: #111827;
+}
+
+.plans-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   margin-bottom: 24px;
+}
+
+.billing-switch {
+  display: inline-flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 999px;
+  padding: 4px;
+}
+
+.billing-switch-btn {
+  border: none;
+  background: transparent;
+  color: #4b5563;
+  font-size: 0.86rem;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.billing-switch-btn-active {
+  background: #111827;
+  color: #ffffff;
 }
 
 .status-message {
@@ -927,6 +1009,16 @@ function extractFirstNumber(value: string) {
 }
 
 @media (max-width: 700px) {
+  .plans-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .billing-switch {
+    width: fit-content;
+    align-self: flex-end;
+  }
+
   .cards-grid {
     grid-template-columns: 1fr;
   }
